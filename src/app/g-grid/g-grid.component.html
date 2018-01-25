@@ -1,0 +1,71 @@
+<div class="g-table">
+    <div class="g-header-toolbar">
+        <button (click)="ClearFilter(true)" *ngIf="internalOptions.FilterOption.isFilterApplied">Clear All Filter</button>
+    </div>
+    <div class="g-thead">
+        <div class="g-col" *ngFor="let col of option.Columns; index as i">
+            <label>{{col.DisplayText}} </label>
+            <button (click)="ShowFilter(col)" class="filter-icon">!</button>
+
+            <div *ngIf="internalOptions.FilterOption.selectedFilterColumn!==null && col.Key==internalOptions.FilterOption.selectedFilterColumn.Key" class="g-col-filter">
+                <div class="filter-close" (click)="HideFilter()">
+                    <span>x</span>
+                </div>
+                <br>
+                <input [(ngModel)]="internalOptions.FilterOption.filterText" #filterTextCtrl="ngModel" type="text" (change)="SearchColumnFilterArray(col)">
+                <div class="filter-data-container">
+                    <div class="filter-item" *ngFor="let filValue of internalOptions.FilterOption.columnFilterArray | async ; index as colI">
+                        <label for="{{col.Key+'_'+colI}}">
+                            <input type="checkbox" id="{{col.Key+'_'+colI}}" name="filterCheck" #chk (change)="AddRemoveFilterData(filValue,col)" [checked]="IsChecked(filValue)"> {{filValue}}
+
+                        </label>
+                    </div>
+
+                </div>
+                <button class="filter-button" (click)="ApplyFilter()">Apply Filter</button>
+                <button class="filter-button" (click)="ClearFilter(false,col)">Clear Filter</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="g-tbody">
+        <div class="g-row" [ngClass]="{'row-select':i==internalOptions.selectedRowIndex}" *ngFor="let data of internalOptions.GridDataSet |async; index as i" (click)="RowSelect(data,i)">
+            <div class="g-col" *ngFor="let col of option.Columns">{{GetCellData(data,col)}}</div>
+        </div>
+    </div>
+    <div class="g-footer">
+        <div *ngIf="option.PaggedGrid" class="page-container">
+             <ul>
+               <li (click)="GotoPage('first')"><label><<</label></li>
+               <li (click)="GotoPage('back')"><label><</label></li>
+                <li *ngFor="let data of internalOptions.PageOption.pages | async; index as i" (click)="GotoPage(data,i)" [ngClass]="{'active':data==internalOptions.PageOption.selectedPage}">
+                    <label >{{data}}</label>
+                </li>
+
+               <li (click)="GotoPage('next')"><label>></label></li>
+               <li (click)="GotoPage('last')"><label>>></label></li>
+            </ul> 
+            <!--<ul>
+                <li (click)="GotoPage('first')"><label ><<</label></li>
+                <li (click)="GotoPage('back')"><label><</label></li>
+                <li>
+                    <label>1</label>
+                </li>
+                <li>
+                    <label>2</label>
+                </li>
+                <li class="active">
+                    <label>3</label>
+                </li>
+                <li>
+                    <label>4</label>
+                </li>
+                <li>
+                    <label>5</label>
+                </li>
+                <li (click)="GotoPage('next')"><label >></label></li>
+                <li (click)="GotoPage('last')"><label>>></label></li>
+            </ul>-->
+        </div>
+    </div>
+</div>
